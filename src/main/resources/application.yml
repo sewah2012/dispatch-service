@@ -3,6 +3,10 @@ server:
 spring:
   application:
     name: dispatch-service
+  config:
+    #    add optional if you want to run the application without the config server: optional:configserver:.
+    #    import: "configserver:"
+    import: "optional:configserver:"
   cloud:
     function:
       definition: pack|label
@@ -13,6 +17,16 @@ spring:
           group: ${spring.application.name}
         packlabel-out-0:
           destination: order-dispatched
+    config:
+      uri: ${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}
+      request-connect-timeout: 5000
+      request-read-timeout: 5000
+      fail-fast: false # In production, set to true
+      retry:
+        max-attempts: 6
+        initial-interval: 1000 # 1s
+        max-interval: 2000 # 2s
+        multiplier: 1.1
   rabbitmq:
     host: localhost
     port: 5672
